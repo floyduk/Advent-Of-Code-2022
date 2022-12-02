@@ -19,6 +19,6 @@ for line in fileinput.input(files="day1/input.txt"):
 # When we exit the loop we've still not added the last elf's total to the list. So do that now.
 elves_calories.append(this_elf_calories)
 
-# Sort the list of elves_calories and add the top 3 numbers to get the answer
+# Sort the list of elves_calories and add th                                                                                                                                                                e top 3 numbers to get the answer
 elves_calories.sort(reverse=True)
 print(sum(elves_calories[0:3]))

@@ -9,14 +9,19 @@ sum_of_priorities = 0
 
 # Iterate the file in bunches of 3 lines
 while True:
-    # Grab 3 lines from the input, convert them to sets and then find the intersection of all 3 sets
-    intersection = set(input_file.readline().rstrip()) & set(input_file.readline().rstrip()), & set(input_file.readline().rstrip())
+    # Grab 3 lines from the input and convert them to sets
+    (line1, line2, line3) = (set(input_file.readline().rstrip()), \
+                             set(input_file.readline().rstrip()), \
+                             set(input_file.readline().rstrip()))
 
     # If the first of the 3 lines is empty then we're done with this loop. Break out of it.
     if len(line1) == 0:
         break
 
-      # Add the priority of the intersection to the sum of priorities
+    # Find the intersection of the 3 sets
+    intersection = line1 & line2 & line3
+
+    # Add the priority of the intersection to the sum of priorities
     sum_of_priorities += to_priority(intersection.pop())
 
 # Print the total sum of priorities

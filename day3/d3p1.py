@@ -10,15 +10,9 @@ sum_of_priorities = 0
 
 # Iterate the file 
 for line in input_lines:
-    # splitting each line in half and convert each half into a set
-    part_length = int(len(line)/2)
-    (line_part_1, line_part_2) = (set(line[:part_length]), set(line[part_length:]))
-
-    # find the intersation of the first and second half sets
-    intersection = line_part_1 & line_part_2
-
-    # Get the priority of the intersection and add it to our sum of priorities
-    sum_of_priorities += to_priority(intersection.pop())
+    # Split each line in half, convert each half into a set and then find the intersection of the sets
+    # Then convert the intersection into a priority value and add it to the total
+    sum_of_priorities += to_priority((set(line[:len(line)//2]) & set(line[len(line)//2:])).pop())
 
 # Print the total sum of priorities
 print(sum_of_priorities)

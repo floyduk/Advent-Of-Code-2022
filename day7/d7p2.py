@@ -54,6 +54,7 @@ def calc_directory_sizes(n, path="") -> int:
 while current_line_number < len(input_lines):
     words = input_lines[current_line_number].split()
 
+    # HANDLE ls LINES
     if(words[1] == "ls"):
         # Starting with the next line we'll be parsing a list of files and directories
         current_line_number += 1
@@ -78,6 +79,7 @@ while current_line_number < len(input_lines):
             if current_line_number >= len(input_lines):     
                 break   
 
+    # HANDLE cd LINES
     else:
         # Change directory based on the parameter given
         parameter = words[2]

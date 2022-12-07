@@ -1,12 +1,7 @@
-from typing import NamedTuple
-
 # open and read the input file
 input_file = open("day7/input.txt", "r")
 input_lines = input_file.read().split("\n")
 
-# We're going to build a directory structure that consists of files and directories.
-# Directories and files are represented using the NamedTuple types declared above. 
-# Directories have a "contents" property that is a list of content elements.
 current_line_number = 0     # Tracks the current input line we're working on
 current_directory = "ROOT"  # The current working directory as a string
 directory_sizes = {}        # A dictionary of directory names (key) and sizes (value)
@@ -15,6 +10,7 @@ directory_sizes = {}        # A dictionary of directory names (key) and sizes (v
 while current_line_number < len(input_lines):
     words = input_lines[current_line_number].split()
 
+    # HANDLE ls LINES
     if(words[1] == "ls"):
         # Starting with the next line we'll be parsing a list of files and directories
         current_line_number += 1
@@ -43,6 +39,7 @@ while current_line_number < len(input_lines):
             if current_line_number >= len(input_lines):     
                 break   
 
+    # HANDLE cd LINES
     else:
         # Change directory based on the parameter given
         parameter = words[2]

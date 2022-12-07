@@ -2,6 +2,9 @@
 input_file = open("day7/input.txt", "r")
 input_lines = input_file.read().split("\n")
 
+# Lambda function to chop everything off after the last slash in string d
+basename = lambda d : d[:d.rfind("/")]
+
 current_line_number = 0     # Tracks the current input line we're working on
 current_directory = "ROOT"  # The current working directory as a string
 directory_sizes = {}        # A dictionary of directory names (key) and sizes (value)
@@ -30,7 +33,7 @@ while current_line_number < len(input_lines):
                 d = current_directory
                 while(d != "ROOT"):
                     directory_sizes[d] = directory_sizes[d] + int(words[0]) if d in directory_sizes else int(words[0])
-                    d = d[:d.rfind("/")]
+                    d = basename(d)
                 directory_sizes[d] = directory_sizes[d] + int(words[0]) if d in directory_sizes else int(words[0])
 
             # We've processed this line. Move on to the next
@@ -46,7 +49,7 @@ while current_line_number < len(input_lines):
         if parameter == "/":
             current_directory = "ROOT"
         elif parameter == "..":
-            current_directory = current_directory[:current_directory.rfind("/")]
+            current_directory = basename(current_directory)
         else:
             current_directory += "/" + parameter
 

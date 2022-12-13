@@ -4,6 +4,8 @@ lines = input_file.read().split("\n")
 
 # This function MUST be given 2 lists. 
 # If an item in the list is a list then it calls itself recursively with the sublists
+# Returns "correct" or "incorrect" if the order correctness can be determined.
+# Returns "ambiguous" if not.
 def order_correct(left, right) -> str:
     for i in range(1000):   # Giving this a max iterations to avoid lockups
         # First check if we've run out of values in one of the lists
@@ -15,7 +17,7 @@ def order_correct(left, right) -> str:
             return "correct"
         elif i < len(left) and i >= len(right):
             # Right ran out first - pair incorrectly ordered
-            return "incorrect"
+            return "incorrect" 
 
         # Grab the left and right values - just for readability
         lv, rv = left[i], right[i]

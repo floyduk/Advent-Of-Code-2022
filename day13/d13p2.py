@@ -6,7 +6,7 @@ lines = input_file.read().split("\n")
 # If an item in the list is a list then it calls itself recursively with the sublists
 # Returns "correct" or "incorrect" if the order correctness can be determined.
 # Returns "ambiguous" if not.
-def order_correct(left, right) -> str:
+def order_correct(left: list, right: list) -> str:
     for i in range(1000):   # Giving this a max iterations to avoid lockups
         # First check if we've run out of values in one of the lists
         if i >= len(left) and i >= len(right):

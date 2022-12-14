@@ -25,7 +25,7 @@ for line in lines:
 
 # Get the lowest point in our rock system. Any sand that goes below this (y>lowest_point) is falling into the void and lost
 # And this means we can stop processing sand blocks.
-lowest_point = sorted([n[1] for n in blocked_nodes])[-1]
+lowest_point = max([n[1] for n in blocked_nodes])
 
 # Simulate sand falling until we encounter one that falls into the void
 while True:

@@ -24,7 +24,7 @@ for line in lines:
                 blocked_nodes.add((nodes[i][0], y))
 
 # Get the lowest point in our rock system and add 2 to calculate the level of the floor.
-floor = sorted([n[1] for n in blocked_nodes])[-1]+2
+floor = max([n[1] for n in blocked_nodes])+2
 print("Floor is at: " + str(floor))
 
 # Simulate sand falling until one comes to rest at 500,0

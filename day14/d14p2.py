@@ -34,35 +34,34 @@ while True:
 
     # Move the new sand block until it comes to rest
     while True:
-        # Can sand move down?
-        if (sand[0], sand[1]+1) in blocked_nodes:
-            # Can sand move down and left?
-            if (sand[0]-1, sand[1]+1) in blocked_nodes:
-                # Can sand move down and right?
-                if (sand[0]+1, sand[1]+1) in blocked_nodes:
-                    # Sand cannot move and comes to rest - add it to the sand_nodes set
-                    sand_count += 1
-                    blocked_nodes.add(sand)
-                    break
-                else:
-                    # Sand can move down and right. Move it.
-                    sand = (sand[0]+1, sand[1]+1)
-            else:
-                # Sand can move down and left. Move it.
-                sand = (sand[0]-1, sand[1]+1)
-        else:
-            # Sand can move down. Move it.
-            sand = (sand[0], sand[1]+1)
-
         # If we're getting near the floor then add floor nodes in this area
         if(sand[1] >= floor - 1):
             blocked_nodes.add((sand[0]-1, floor))
             blocked_nodes.add((sand[0], floor))
             blocked_nodes.add((sand[0]+1, floor))
-        
-    # Did the last block of sand come to rest in the sand source location?
+
+        # Can sand move down?
+        if (sand[0], sand[1]+1) not in blocked_nodes:
+            sand = (sand[0], sand[1]+1)
+            continue
+
+        # Can sand move down and left?
+        if (sand[0]-1, sand[1]+1) not in blocked_nodes:
+            sand = (sand[0]-1, sand[1]+1)
+            continue
+
+        # Can sand move down and right?
+        if (sand[0]+1, sand[1]+1) not in blocked_nodes:
+            sand = (sand[0]+1, sand[1]+1)
+            continue
+
+        # Sand cannot move and comes to rest - add it to the sand_nodes set
+        sand_count += 1
+        blocked_nodes.add(sand)
+        break
+
+    # Did the last block of sand come to rest in the sand source location? If so stop the simulation
     if sand == (500, 0):
-        # All sand has fallen. Stop the simulation
         break
 
 # Print the number of nodes in sand_nodes

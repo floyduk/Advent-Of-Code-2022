@@ -37,13 +37,11 @@ def check_point(x: int, y: int):
         print("\nAnswer:" + str(x * 4000000 + y))
         exit(0)
 
-
 # Iterate the sensors. s is sensor coordinates. b is beacon coordinates. d is manhattan distance.
 # Looking for points that are exactly 1 step outside the range of each sensor then call check_point()
 # on each one to check if it is covered by any other sensor.
 points = set()
 for s, b in sensors.items():
-    # possible_points[s] = set()
     # Calculate the manhattan distance between the sensor and beacon and then the extents of the diamond 
     # of points just out of range of the beacon
     d = manhattan_distance(s, b)
@@ -52,20 +50,7 @@ for s, b in sensors.items():
 
     print("\nSensor: " + str(s) + " range " + str(d) + ": ", end="")
 
-    # Draw top diagonals
-    x, x2 = s[0]+1, s[0]-1
-    check_point(s[0], top_y)
-    for y in range(top_y+1, s[1]+1):
-        check_point(x, y)
-        check_point(x2, y)
-        x += 1
-        x2 -= 1
-
-    # Draw bottom diagonals
-    x, x2 = right_x-1, left_x+1
-    for y in range(s[1]+1, bottom_y):
-        check_point(x, y)
-        check_point(x2, y)
-        x += -1
-        x2 += 1
-    check_point(s[0], bottom_y)
+    r = manhattan_distance(s, b) + 1
+    for dy in range(-r, r+1):
+        check_point(s[0] - (r - dy), s[1] + dy)
+        check_point(s[0] + (r - dy), s[1] + dy)

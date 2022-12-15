@@ -21,14 +21,8 @@ for line in input:
     sensors[(sx, sy)] = (bx, by)
 
 # Check if a point is covered by any sensor. Stop when we find one that isn't. This is the answer.
-count=0
 def check_point(x: int, y: int):
-    global count
     if min_xy <= x <= max_xy and min_xy <= y <= max_xy:
-        count += 1
-        if count%10000 == 0:
-            print(".", end="")
-
         for s, b in sensors.items():
             if manhattan_distance(s, (x, y)) <= manhattan_distance(s, b):
                 return
@@ -44,12 +38,6 @@ points = set()
 for s, b in sensors.items():
     # Calculate the manhattan distance between the sensor and beacon and then the extents of the diamond 
     # of points just out of range of the beacon
-    d = manhattan_distance(s, b)
-    top_y, bottom_y = s[1] - d - 1, s[1] + d + 1
-    right_x, left_x = s[0] + d + 1, s[0] - d - 1
-
-    print("\nSensor: " + str(s) + " range " + str(d) + ": ", end="")
-
     r = manhattan_distance(s, b) + 1
     for dy in range(-r, r+1):
         check_point(s[0] - (r - dy), s[1] + dy)

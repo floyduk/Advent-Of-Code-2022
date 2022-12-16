@@ -1,4 +1,7 @@
 from copy import copy
+import time
+
+start_time = time.process_time()
 
 # open and read the input file
 input_file = open("day16/input.txt", "r")
@@ -8,7 +11,6 @@ class valve:
     name: str
     rate: int
     leads_to: dict
-    valves_this_way: set
     def __init__(self, name: str, rate: int, leads_to: list) -> None:
         self.name = name
         self.rate = rate
@@ -16,8 +18,12 @@ class valve:
         for l in leads_to:
             self.leads_to[l] = 1
         self.valves_this_way = set()
+    def sorted_leads_to(self):
+        global valves
+        for a in sorted(self.leads_to.items(), key=lambda item: valves[item[0]].rate, reverse=True):
+            yield a
 
-# A list of valves
+# A dict of valves
 valves = dict()
 
 # Parse input and create a dict of values
@@ -30,15 +36,15 @@ total_max_rates = sum([valves[v].rate for v in valves])
 
 # Function to track reported results
 max_total_pressure = 0
-def report_result(path: list, total_rate: int, total_pressure: int):
+def report_result(path: list, total_pressure: int):
     global max_total_pressure
     if(total_pressure > max_total_pressure):
         max_total_pressure = total_pressure
-        print(f"Total rate/min: {total_rate}, total pressure released: {total_pressure}, path: {path}")
+        print(f"Total pressure released: {total_pressure}, path: {path}")
 
 # Function to prevent repetition
 def detect_repetition(vn: str, path: list) -> bool:
-    for i in range(2, 5):
+    for i in range(2, 4):
         if len(path) < (i*2)-1:
             break
 
@@ -49,18 +55,18 @@ def detect_repetition(vn: str, path: list) -> bool:
     return False
 
 # Check if there are any unopened valves beyond this node
-def nothing_useful_this_way(v: valve, my_remaining_valves: list) -> bool:
-    return len([r for r in my_remaining_valves if r in v.valves_this_way]) == 0
+# def nothing_useful_this_way(v: valve, my_remaining_valves: list) -> bool:
+#     return len([r for r in my_remaining_valves if r in v.valves_this_way]) == 0
 
 # Recursive function to traverse the tree
-def go_to_valve(vname:str, path: list, mins_left: int, total_rate: int, total_pressure: int, remaining_rate: int, remaining_valves: list, travel_time: int):
+def go_to_valve(vname:str, path: list, mins_left: int, total_pressure: int, remaining_rate: int, remaining_valves: list, travel_time: int):
     global max_total_pressure
     global valves
 
     my_valve = valves[vname]
 
     # cull this branch if there's no way it can match the current max_total_pressure
-    if total_pressure + ((total_rate + remaining_rate) * mins_left) < max_total_pressure:
+    if total_pressure + (remaining_rate * (mins_left-len(remaining_valves))) < max_total_pressure:
         return
 
     my_remaining_valves = remaining_valves.copy()
@@ -68,17 +74,12 @@ def go_to_valve(vname:str, path: list, mins_left: int, total_rate: int, total_pr
     # If there is a travel time then account for it
     if travel_time > 0:
         mins_left = mins_left - travel_time             # For the travel time
-        total_pressure += (total_rate * travel_time)    # A minute passed so track the total pressure
         if mins_left < 1:
-            report_result([*path, vname], total_rate, total_pressure)
+            report_result([*path, vname], total_pressure)
             return
 
     # Now go to the next valve based on their value without first opening this valve
-    for vn, travel_cost in my_valve.leads_to.items():
-        # Cull if this doesn't lead to a remaining valve
-        # if nothing_useful_this_way(valves[vn], my_remaining_valves):
-        #     continue              
-
+    for vn, travel_cost in my_valve.sorted_leads_to():
         if len(my_remaining_valves) == 0:
             continue
 
@@ -86,29 +87,20 @@ def go_to_valve(vname:str, path: list, mins_left: int, total_rate: int, total_pr
         if detect_repetition(vn, [*path, vname]):
             continue
 
-        # Cull if we've visited as many times as it has paths plus 1
-        if path.count(vn) >= len(valves[vn].leads_to) + 1:
-            continue
-
-        go_to_valve(vn, [*path, vname], mins_left, total_rate, total_pressure, remaining_rate, my_remaining_valves, travel_cost)
+        go_to_valve(vn, [*path, vname], mins_left, total_pressure, remaining_rate, my_remaining_valves, travel_cost)
 
     # If this valve has non zero value and this is our first time here then open it - taking 1 minute
     if my_valve.rate > 0 and vname in my_remaining_valves:
         mins_left = mins_left - 1           # For opening the valve
-        total_pressure += total_rate        # A minute passed so track the total pressure
+        total_pressure += my_valve.rate * mins_left
         remaining_rate -= my_valve.rate     # Reduce the remaining available rate
         my_remaining_valves.remove(vname)   # Remove this valve from the list of remaining valves
-        total_rate += my_valve.rate         # Add this valve's rate to the total/min
         if mins_left < 1:
-            report_result([*path, vname], total_rate, total_pressure)
+            report_result([*path, vname], total_pressure)
             return
     
         # Now go to the next valve based on their value
         for vn, travel_cost in my_valve.leads_to.items():
-            # Cull if this doesn't lead to a remaining valve
-            # if nothing_useful_this_way(valves[vn], my_remaining_valves):
-            #     continue              
-
             if len(my_remaining_valves) == 0:
                 continue
 
@@ -116,19 +108,11 @@ def go_to_valve(vname:str, path: list, mins_left: int, total_rate: int, total_pr
             if detect_repetition(vn, [*path, vname]):
                 continue
 
-            # Cull if we've visited as many times as it has paths plus 1
-            if path.count(vn) >= len(valves[vn].leads_to) + 1:
-                continue
-
-            go_to_valve(vn, [*path, vname], mins_left, total_rate, total_pressure, remaining_rate, my_remaining_valves, travel_cost)
+            go_to_valve(vn, [*path, vname], mins_left, total_pressure, remaining_rate, my_remaining_valves, travel_cost)
     
     # Nowhere else to go. Wait here until the time is up
-    while True:
-        mins_left = mins_left - 1       # For opening the valve
-        total_pressure += total_rate    # A minute passed so track the total pressure
-        if mins_left < 1:
-            report_result([*path, vname], total_rate, total_pressure)
-            return
+    report_result([*path, vname], total_pressure)
+    return
 
 
 # Simplify the network
@@ -139,7 +123,7 @@ def simplify(vname, path) -> list:
 
     # If this node only leads to one other node AND it has a zero rate then it can be simplified out
     if len(my_valve.leads_to) == 2 and path[-1] in my_valve.leads_to.keys() and my_valve.rate == 0:
-        print(f"Removing node {vname}")
+        print(f"Removing node {vname} - ", end="")
         # Get the last and next node names
         last_node = path[-1]
         last_cost = my_valve.leads_to[last_node]
@@ -166,6 +150,8 @@ def simplify(vname, path) -> list:
         # Delete the next_node from this node's leads_to
         del my_valve.leads_to[next_node]
         
+        print(f"{last_node}.leads_to={valves[last_node].leads_to}, {next_node}.leads_to={valves[next_node].leads_to}")
+
         # Something changed so return true
         return True
 
@@ -175,11 +161,6 @@ def simplify(vname, path) -> list:
         for next_valve in my_valve.leads_to.keys():
             if next_valve in path:
                 continue
-
-            if valves[next_valve].rate > 0:
-                my_valve.valves_this_way.add(next_valve)
-                for v in path:
-                    valves[v].valves_this_way.add(next_valve)
 
             if something_changed := simplify(next_valve, [*path, vname]):
                 break
@@ -191,6 +172,7 @@ simplify("AA", [])
 
 # Start at AA
 init_remaining_valves = [vn for vn in valves.keys() if valves[vn].rate > 0]
-go_to_valve("AA", [], 30, 0, 0, total_max_rates, init_remaining_valves, 0)
+go_to_valve("AA", [], 30, 0, total_max_rates, init_remaining_valves, 0)
 
 print(max_total_pressure)
+print("execution time (in ms): ",(time.process_time()-start_time)*1000) 

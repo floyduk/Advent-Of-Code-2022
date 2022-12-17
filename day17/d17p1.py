@@ -42,7 +42,7 @@ def check_move(direction, block, x, y):
 
 # Drop 2022 blocks keeping track of the col_tops
 last_max_y = 0
-for i in range(1000000):
+for i in range(2022):
     # Choose a block and set its location
     block = blocks[i % len(blocks)]
     x = 2

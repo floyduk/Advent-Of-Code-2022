@@ -31,9 +31,6 @@ for line in input:
     words = line.split()
     valves[words[1]] = valve(words[1], int(words[4].split("=")[1][:-1]), [w.rstrip(",") for w in words[9:]])
 
-# Get the total of all valves rates
-total_max_rates = sum([valves[v].rate for v in valves])
-
 # Function to track reported results
 max_total_pressure = 0
 def report_result(path: list, total_pressure: int):
@@ -54,10 +51,6 @@ def detect_repetition(vn: str, path: list) -> bool:
             return True
     return False
 
-# Check if there are any unopened valves beyond this node
-# def nothing_useful_this_way(v: valve, my_remaining_valves: list) -> bool:
-#     return len([r for r in my_remaining_valves if r in v.valves_this_way]) == 0
-
 # Recursive function to traverse the tree
 def go_to_valve(vname:str, path: list, mins_left: int, total_pressure: int, remaining_rate: int, remaining_valves: list, travel_time: int):
     global max_total_pressure
@@ -66,7 +59,9 @@ def go_to_valve(vname:str, path: list, mins_left: int, total_pressure: int, rema
     my_valve = valves[vname]
 
     # cull this branch if there's no way it can match the current max_total_pressure
-    if total_pressure + (remaining_rate * (mins_left-len(remaining_valves))) < max_total_pressure:
+    biggest_remaining_valve = valves[remaining_valves[0]].rate
+    the_rest = remaining_rate - biggest_remaining_valve
+    if total_pressure + (biggest_remaining_valve * (mins_left-1)) + (the_rest * (mins_left - 3)) < max_total_pressure:
         return
 
     my_remaining_valves = remaining_valves.copy()
@@ -171,7 +166,8 @@ def simplify(vname, path) -> list:
 simplify("AA", [])
 
 # Start at AA
-init_remaining_valves = [vn for vn in valves.keys() if valves[vn].rate > 0]
+total_max_rates = sum([valves[v].rate for v in valves])
+init_remaining_valves = sorted([vn for vn in valves.keys() if valves[vn].rate > 0], key=lambda x: valves[x].rate, reverse=True)
 go_to_valve("AA", [], 30, 0, total_max_rates, init_remaining_valves, 0)
 
 print(max_total_pressure)

@@ -1,6 +1,7 @@
 # open and read the input file
 input_file = open("day17/input.txt", "r")
 gasses = input_file.read()
+lg = len(gasses)
 
 blocks = [
     [(0,0), (1,0), (2,0), (3,0)],
@@ -40,7 +41,8 @@ def check_move(direction, block, x, y):
 #########################
 
 # Drop 2022 blocks keeping track of the col_tops
-for i in range(2022):
+last_max_y = 0
+for i in range(1000000):
     # Choose a block and set its location
     block = blocks[i % len(blocks)]
     x = 2
@@ -51,6 +53,10 @@ for i in range(2022):
         # Push sideways
         (x,y, result) = check_move(gasses[gas_jet % len(gasses)], block, x, y)
         gas_jet += 1
+
+        if gas_jet % lg == 0:
+            print(f"{len(grid)-1 - last_max_y}: {gas_jet} {i}")
+            last_max_y = len(grid)-1
 
         # Fall down
         (x,y, result) = check_move("V", block, x, y)

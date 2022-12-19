@@ -34,11 +34,11 @@ max_geodes = 0
 def recurse(bp: dict, budget: int, bots: list, mats: list, making: int):
     global max_geodes
 
-    while budget > 0:
-        # Culling test
-        if mats[3] + (bots[3] * budget) + (possible_geodes(budget)) <= max_geodes:
-            return
+    # Culling test
+    if mats[3] + (bots[3] * budget) + (possible_geodes(budget)) <= max_geodes:
+        return
 
+    while budget > 0:
         # Are we making something? If not then choose something to make.
         # We are making something so check if we have the materials for it yet.
         if mats[0] >= bp[making][0] and mats[1] >= bp[making][1] and mats[2] >= bp[making][2]:
@@ -78,12 +78,13 @@ def recurse(bp: dict, budget: int, bots: list, mats: list, making: int):
 #############
 # MAIN LOOP #
 #############
-total_quality = 0
-for blueprint in blueprints:
+max_geodes_list = []
+for i in range(3):
+    blueprint = blueprints[i]
     max_geodes = 0
     for m in [1, 0]:    # At the start we can only afford ore bots or clay bots
-        recurse(blueprint, 24, [1,0,0,0], [0,0,0,0], m)
+        recurse(blueprint, 32, [1,0,0,0], [0,0,0,0], m)
     print(f"Blueprint {blueprint[4]} produced {max_geodes} geodes")
-    total_quality += blueprint[4] * max_geodes
+    max_geodes_list.append(max_geodes)
 
-print(total_quality)
+print(max_geodes_list[0] * max_geodes_list[1] * max_geodes_list[2])

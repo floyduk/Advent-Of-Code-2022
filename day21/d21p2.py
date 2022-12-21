@@ -110,4 +110,4 @@ def get_expression_for(monkey_name):
 
     return expression
 
-print(get_expression_for(monkeys["root"][0]) + " = " + get_expression_for(monkeys["root"][2]))
+print("\nExtra credit: This is the equation our data gives us for root:\n" + get_expression_for(monkeys["root"][0]) + " = " + get_expression_for(monkeys["root"][2]))

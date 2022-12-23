@@ -47,10 +47,6 @@ if debug:
     print_positions()
 
 for i in range(10):
-    if debug:
-        print(f"Direction: {propose_direction} {propose_directions[propose_direction]}")
-        print(f"Elf 0: Starting at {elves[0]} ", end="")
-
     # Loop through the elves proposing a new position for each and building the new positions into elves_new_loc[]
     elves_new_loc = []
     for e in elves:
@@ -86,9 +82,6 @@ for i in range(10):
         if move_proposed == False:
             elves_new_loc.append(e)
 
-    if debug:
-        print(f"moving to {elves_new_loc[0]} ", end="")
-
     # Update propose direction
     propose_direction = (propose_direction+1) % 4
 
@@ -97,9 +90,6 @@ for i in range(10):
         if len([e for e in elves_new_loc if e == elves_new_loc[j]]) > 1:
             elves_new_loc = [e if e != elves_new_loc[j] else elves[i] for i, e in enumerate(elves_new_loc)]
     
-    if debug:
-        print(f"updated moving to {elves_new_loc[0]} ")
-
     # Move the elves to their new locations
     elves = elves_new_loc
 

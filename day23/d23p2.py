@@ -25,30 +25,13 @@ for y in range(len(input)):
 
 print(f"Total elves: {len(elves)}")
 
-def print_positions():
-    global elves
-    min_x, max_x = min([e[0] for e in elves]), max([e[0] for e in elves])
-    min_y, max_y = min([e[1] for e in elves]), max([e[1] for e in elves])
-
-    for y in range(min_y, max_y+1):
-        for x in range(min_x, max_x+1):
-            print("# " if (x,y) in elves else ". ", end="")
-        print()    
-
 #############
 # MAIN LOOP #
 #############
 
-if debug:
-    print_positions()
-
 round_number = 0
 while True:
     round_number += 1
-
-    if debug:
-        print(f"Direction: {propose_direction} {propose_directions[propose_direction]}")
-        print(f"Elf 0: Starting at {elves[0]} ", end="")
 
     # Loop through the elves proposing a new position for each and building the new positions into elves_new_loc[]
     elves_new_loc = []
@@ -90,10 +73,8 @@ while True:
     if count_didnt_move == len(elves):
         break
     else:
-        print(round_number, ":", count_didnt_move, " ", end="")
-
-    if debug:
-        print(f"moving to {elves_new_loc[0]} ", end="")
+        if debug:
+            print(round_number, ":", count_didnt_move, " ", end="")
 
     # Update propose direction
     propose_direction = (propose_direction+1) % 4
@@ -102,14 +83,8 @@ while True:
     for j in range(len(elves)):
         if len([e for e in elves_new_loc if e == elves_new_loc[j]]) > 1:
             elves_new_loc = [e if e != elves_new_loc[j] else elves[i] for i, e in enumerate(elves_new_loc)]
-    
-    if debug:
-        print(f"updated moving to {elves_new_loc[0]} ")
 
     # Move the elves to their new locations
     elves = elves_new_loc
 
-    if debug:
-        print_positions()
-
-print(round_number)
+print("\n", round_number)

@@ -54,12 +54,16 @@ def is_clear(x:int, y:int) -> bool:
 # MAIN LOOP #
 #############
 
+# For part 2 - the goals and an index into the list
+goals = [(ex,ey), (sx,sy), (ex,ey)]
+g = 0
+print(f"Minute number: 0 New goal: {goals[g]}")
+
 directions = {"S": (0,1), "E": (1,0), "N": (0,-1), "W": (-1,0), "X": (0,0)}
 possible_locations = set()
 possible_locations.add((sx, sy))
 minute_number = 0
 while True:
-    minute_number += 1
 
     move_blizzards()
 
@@ -68,12 +72,25 @@ while True:
         for d in "SENWX":
             (nx,ny) = calc_new_coordinates((x,y), directions[d])
 
-            if (nx, ny) == (ex, ey):
-                # WE REACHED THE EXIT
-                print(f"Minute number: {minute_number}")
-                exit(0)
-
             if is_clear(nx, ny):
                 next_possible_locations.add((nx,ny))
 
+    if goals[g] in possible_locations:
+        # Clear all other possible locations and just choose the goal location
+        next_possible_locations = set()
+        next_possible_locations.add(goals[g])
+
+        # Move onto the next goal
+        g += 1
+
+        # If we reached the end of the goals then we are finished.
+        if g == len(goals):
+            # WE FINISHED
+            print(f"Minute number: {minute_number}")
+            exit(0)
+
+        print(f"Minute number: {minute_number} New goal: {goals[g]}")
+
     possible_locations = next_possible_locations
+
+    minute_number += 1
